@@ -1410,7 +1410,7 @@ function applyFilters() {
     const messageContent = document.getElementById('filterMessageContent').value.toLowerCase();
     
     // Debug: log selected labels when filtering
-    console.log('[FILTER DEBUG - LIVE MODE] Selected labels count:', selectedLabels.length, '| Labels:', selectedLabels);
+    // console.log('[FILTER DEBUG - LIVE MODE] Selected labels count:', selectedLabels.length, '| Labels:', selectedLabels);
     
     const messages = document.querySelectorAll('.message-item');
     let visibleCount = 0;
@@ -1482,9 +1482,9 @@ function applyFilters() {
             const labelCode = labelText.split(' ')[0].split('(')[0]; // Get just the code part (before space or parenthesis)
             
             // Debug: log SQ messages to help diagnose filtering issues
-            if (labelCode === 'SQ') {
-                console.log('[DEBUG - LIVE MODE] SQ message found. Selected labels:', selectedLabels, 'Includes SQ?', selectedLabels.includes('SQ'));
-            }
+            // if (labelCode === 'SQ') {
+            //     console.log('[DEBUG - LIVE MODE] SQ message found. Selected labels:', selectedLabels, 'Includes SQ?', selectedLabels.includes('SQ'));
+            // }
             
             let matchesLabel = false;
             
@@ -2475,7 +2475,7 @@ function applyFilters() {
     const messageContent = document.getElementById('filterMessageContent').value.toLowerCase();
     
     // Debug: log selected labels when filtering
-    console.log('[FILTER DEBUG] Selected labels count:', selectedLabels.length, '| Labels:', selectedLabels);
+    // console.log('[FILTER DEBUG] Selected labels count:', selectedLabels.length, '| Labels:', selectedLabels);
     
     const messages = document.querySelectorAll('.message-item');
     let visibleCount = 0;
@@ -2547,9 +2547,9 @@ function applyFilters() {
             const labelCode = labelText.split(' ')[0].split('(')[0]; // Get just the code part (before space or parenthesis)
             
             // Debug: log SQ messages to help diagnose filtering issues
-            if (labelCode === 'SQ') {
-                console.log('[DEBUG] SQ message found. Selected labels:', selectedLabels, 'Includes SQ?', selectedLabels.includes('SQ'));
-            }
+            // if (labelCode === 'SQ') {
+            //     console.log('[DEBUG] SQ message found. Selected labels:', selectedLabels, 'Includes SQ?', selectedLabels.includes('SQ'));
+            // }
             
             let matchesLabel = false;
             
