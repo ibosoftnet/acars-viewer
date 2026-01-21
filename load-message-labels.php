@@ -5,11 +5,11 @@ $csvFile = __DIR__ . '/acars-decoding-library/label-list.csv';
 
 if (file_exists($csvFile)) {
     $file = fopen($csvFile, 'r');
-    $header = fgetcsv($file, 0, ',', '\\'); // Skip header row
+    $header = fgetcsv($file, 0, ',', '"', '\\'); // Skip header row
 
     // First pass: collect all labels with their directions and decodability
     $labelData = [];
-    while (($row = fgetcsv($file, 0, ',', '\\')) !== false) {
+    while (($row = fgetcsv($file, 0, ',', '"', '\\')) !== false) {
         if (count($row) >= 5) {
             $direction = strtoupper(trim($row[0])); // up/dn
             $code = trim($row[1]);
