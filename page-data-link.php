@@ -4,22 +4,14 @@
 // Live Feed (default) + History Mode
 // ===============================
 
-// Enable error handling - TEMPORARY DEBUG MODE
-ini_set('display_errors', '1');
+// Enable error handling
+ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 error_reporting(E_ALL);
-// ob_start(); // DISABLED FOR DEBUGGING
-
-// DEBUG: Show we reached this point
-echo "<!-- DEBUG: Script started -->\n";
+ob_start();
 
 // Include configuration first (needed for constants)
-echo "<!-- DEBUG: About to include config.php -->\n";
-if (!file_exists('config.php')) {
-    die("FATAL ERROR: config.php not found in " . __DIR__);
-}
-require_once 'config.php';
-echo "<!-- DEBUG: config.php loaded successfully -->\n";
+require_once 'data-link-config.php';
 
 // Determine mode: 'live' (default) or 'history'
 $isHistoryMode = isset($_GET['history']);
