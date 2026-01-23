@@ -453,7 +453,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                         </div>
                     </div>
                     
-                    <div class="filter-item-compact" style="min-width: 330px;">
+                    <div class="filter-item-compact" style="min-width: 300px;">
                         <label>Frequency - Subnetwork:</label>
                         <div class="multiselect-wrapper">
                             <button type="button" class="multiselect-btn" onclick="toggleMultiselect(event, 'filterFrequency')">
