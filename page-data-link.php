@@ -497,7 +497,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                     </div>
                     
                     <div class="filter-item-compact filter-flight-compact" id="filterFlightContainer">
-                        <label>Flight:</label>
+                        <label>Flight Identifier:</label>
                         <input type="text" name="filterFlightNumber" id="filterFlightNumber" class="filter-input-compact" placeholder="e.g. IBO123" value="<?php echo $isHistoryMode ? htmlspecialchars($filterFlightNumber) : ''; ?>" />
                     </div>
                     
@@ -572,14 +572,14 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                 <span class="tag tag-timestamp">Date - Time (UTC)</span>
                 <span class="tag tag-station">Receiver ID</span>
                 <span class="tag tag-level">Signal Level</span>
-                <span class="tag tag-freq">Frequency - Subnetwork - Region - CSP Name</span>
+                <span class="tag tag-freq">Frequency - Subnetwork - Region - DSP Name</span>
                 <span class="tag tag-app">Network Type</span>
             </div>
             <div style="display: flex; align-items: flex-start; gap: 10px; padding-right: 280px;">
                 <div style="font-weight: bold; color: #2c5aa0; font-size: 13px; padding: 4px 8px; background: #f0f4f8; border-radius: 4px; white-space: nowrap;">ACARS Network Only:</div>
                 <div style="display: flex; flex-wrap: wrap; gap: 5px;">
                     <span class="tag tag-tail">Registration</span>
-                    <span class="tag tag-flight">Flight Number</span>
+                    <span class="tag tag-flight">Downlink Flight Identifier</span>
                     <span class="tag tag-ack">Acknowledgement</span>
                     <span class="tag tag-label">Message Label (Format)</span>
                     <span class="tag tag-dl-system">Data Link System Type</span>
