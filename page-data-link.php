@@ -963,7 +963,8 @@ function populateDropdowns() {
         networkTypeContainer.innerHTML = '';
         const networkTypes = [
             { value: 'ACARS', label: 'ACARS' },
-            { value: 'ATN', label: 'ATN (Not Implemented)' }
+            { value: 'ATN', label: 'ATN (Not Implemented)' },
+            { value: 'Other', label: 'Other' }
         ];
         networkTypes.forEach(type => {
             const checked = SELECTED_NETWORK_TYPES.length === 0 || SELECTED_NETWORK_TYPES.includes(type.value) ? 'checked' : '';
@@ -1557,17 +1558,20 @@ function applyFilters() {
         }
         
         // Network Type filtering (only apply if not all options are selected)
-        if (networkTypes.length > 0 && networkTypes.length < 2) {
+        if (networkTypes.length > 0 && networkTypes.length < 3) {
             const appText = appTag ? appTag.textContent : '';
             let matchesNetwork = false;
             
             if (networkTypes.includes('ACARS')) {
-                if (appText === 'ACARS' || appText === 'CPDLC') matchesNetwork = true;
+                if (appText === 'ACARS') matchesNetwork = true;
             }
             
-            // ATN not implemented - no messages should show when ATN is selected
             if (networkTypes.includes('ATN')) {
-                matchesNetwork = false; // Force hide all messages for ATN
+                if (appText === 'ATN') matchesNetwork = true;
+            }
+            
+            if (networkTypes.includes('Other')) {
+                if (appText === 'Other') matchesNetwork = true;
             }
             
             if (!matchesNetwork) show = false;
@@ -2409,65 +2413,76 @@ function addMessage(messageData, isNew) {
     }
     tagsDiv.appendChild(freqTag);
     
-    // App Type
+    // Network Type
     const appTag = document.createElement('span');
     appTag.className = 'tag tag-app';
     if (messageData.app && messageData.app.name) {
-        if (messageData.app.name === 'acarsdec') appTag.textContent = 'ACARS';
-        else if (messageData.app.name === 'vdlm2dec') appTag.textContent = 'CPDLC';
-        else appTag.textContent = 'Other';
+        const appName = messageData.app.name.toLowerCase();
+        if (['acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl'].includes(appName)) {
+            appTag.textContent = 'ACARS';
+        } else if (['dummyapp'].includes(appName)) {
+            appTag.textContent = 'ATN';
+        } else {
+            appTag.textContent = 'Other';
+        }
     }
     tagsDiv.appendChild(appTag);
     
-    // Tail
-    const tailTag = document.createElement('span');
-    tailTag.className = 'tag tag-tail';
-    tailTag.textContent = messageData.tail || '';
-    tagsDiv.appendChild(tailTag);
+    // Determine if this is ACARS network (for ACARS-only tags)
+    const isACARSNetwork = appTag.textContent === 'ACARS';
     
-    // Flight
-    const flightTag = document.createElement('span');
-    flightTag.className = 'tag tag-flight';
-    flightTag.textContent = messageData.flight || '';
-    tagsDiv.appendChild(flightTag);
-    
-    // ACK
-    const ackTag = document.createElement('span');
-    ackTag.className = 'tag tag-ack';
-    ackTag.textContent = ('ack' in messageData && messageData.ack) ? 'ACK' : 'NO ACK';
-    tagsDiv.appendChild(ackTag);
-    
-    // Label
-    const labelTag = document.createElement('span');
-    labelTag.className = 'tag tag-label';
-    if (messageData.label) {
-        const labelInfo = MESSAGE_LABEL_DESCRIPTIONS[messageData.label];
-        if (labelInfo) {
-            let labelText = `${messageData.label} (${labelInfo.explanation}`;
-            if (labelInfo.direction) {
-                labelText += ` — ${labelInfo.direction}`;
+    // ACARS Network Only Tags - only show for ACARS messages
+    if (isACARSNetwork) {
+        // Tail (Registration)
+        const tailTag = document.createElement('span');
+        tailTag.className = 'tag tag-tail';
+        tailTag.textContent = messageData.tail || '';
+        tagsDiv.appendChild(tailTag);
+        
+        // Flight (Downlink Flight Identifier)
+        const flightTag = document.createElement('span');
+        flightTag.className = 'tag tag-flight';
+        flightTag.textContent = messageData.flight || '';
+        tagsDiv.appendChild(flightTag);
+        
+        // ACK (Acknowledgement)
+        const ackTag = document.createElement('span');
+        ackTag.className = 'tag tag-ack';
+        ackTag.textContent = ('ack' in messageData && messageData.ack) ? 'ACK' : 'NO ACK';
+        tagsDiv.appendChild(ackTag);
+        
+        // Label (Message Label Format)
+        const labelTag = document.createElement('span');
+        labelTag.className = 'tag tag-label';
+        if (messageData.label) {
+            const labelInfo = MESSAGE_LABEL_DESCRIPTIONS[messageData.label];
+            if (labelInfo) {
+                let labelText = `${messageData.label} (${labelInfo.explanation}`;
+                if (labelInfo.direction) {
+                    labelText += ` — ${labelInfo.direction}`;
+                }
+                labelText += ')';
+                labelTag.textContent = labelText;
+            } else {
+                labelTag.textContent = messageData.label;
             }
-            labelText += ')';
-            labelTag.textContent = labelText;
-        } else {
-            labelTag.textContent = messageData.label;
         }
-    }
-    tagsDiv.appendChild(labelTag);
-    
-    // Data Link System Type and Operation Type (after label)
-    if (messageData.label) {
-        const dlTypes = getDataLinkTypes(messageData.label);
+        tagsDiv.appendChild(labelTag);
         
-        const systemTypeTag = document.createElement('span');
-        systemTypeTag.className = 'tag tag-dl-system';
-        systemTypeTag.textContent = dlTypes.system;
-        tagsDiv.appendChild(systemTypeTag);
-        
-        const operationTypeTag = document.createElement('span');
-        operationTypeTag.className = 'tag tag-dl-operation';
-        operationTypeTag.textContent = dlTypes.operation;
-        tagsDiv.appendChild(operationTypeTag);
+        // Data Link System Type and Operation Type (after label)
+        if (messageData.label) {
+            const dlTypes = getDataLinkTypes(messageData.label);
+            
+            const systemTypeTag = document.createElement('span');
+            systemTypeTag.className = 'tag tag-dl-system';
+            systemTypeTag.textContent = dlTypes.system;
+            tagsDiv.appendChild(systemTypeTag);
+            
+            const operationTypeTag = document.createElement('span');
+            operationTypeTag.className = 'tag tag-dl-operation';
+            operationTypeTag.textContent = dlTypes.operation;
+            tagsDiv.appendChild(operationTypeTag);
+        }
     }
     
     messageDiv.appendChild(tagsDiv);
@@ -2662,17 +2677,20 @@ function applyFilters() {
         }
         
         // Network Type filtering (only apply if not all options are selected)
-        if (networkTypes.length > 0 && networkTypes.length < 2) {
+        if (networkTypes.length > 0 && networkTypes.length < 3) {
             const appText = appTag ? appTag.textContent : '';
             let matchesNetwork = false;
             
             if (networkTypes.includes('ACARS')) {
-                if (appText === 'ACARS' || appText === 'CPDLC') matchesNetwork = true;
+                if (appText === 'ACARS') matchesNetwork = true;
             }
             
-            // ATN not implemented - no messages should show when ATN is selected
             if (networkTypes.includes('ATN')) {
-                matchesNetwork = false; // Force hide all messages for ATN
+                if (appText === 'ATN') matchesNetwork = true;
+            }
+            
+            if (networkTypes.includes('Other')) {
+                if (appText === 'Other') matchesNetwork = true;
             }
             
             if (!matchesNetwork) show = false;
