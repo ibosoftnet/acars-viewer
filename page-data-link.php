@@ -2094,6 +2094,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize pagination for History mode
     if (IS_HISTORY_MODE) {
         initializePagination();
+        
+        // Apply client-side filters (for Network Type and other client-side only filters)
+        // This is needed because Network Type filter is not applied server-side
+        applyFilters();
     }
     
     // Only apply client-side filters in Live mode if there are URL parameters
