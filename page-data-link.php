@@ -924,7 +924,7 @@ function populateDropdowns() {
         otherLabel.style.borderTop = '1px solid #ddd';
         otherLabel.style.marginTop = '4px';
         otherLabel.style.paddingTop = '8px';
-        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterReceiverId')" data-ui-only="true"><span style="font-style: italic;">Other (Unknown Receivers)</span>`;
+        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterReceiverId')" data-ui-only="true"><span style="font-style: italic;">Other</span>`;
         receiverContainer.appendChild(otherLabel);
         
         updateMultiselect('filterReceiverId');
@@ -949,7 +949,7 @@ function populateDropdowns() {
         otherLabel.style.borderTop = '1px solid #ddd';
         otherLabel.style.marginTop = '4px';
         otherLabel.style.paddingTop = '8px';
-        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterFrequency')" data-ui-only="true"><span style="font-style: italic;">Other (Unknown Frequencies)</span>`;
+        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterFrequency')" data-ui-only="true"><span style="font-style: italic;">Other</span>`;
         frequencyContainer.appendChild(otherLabel);
         
         updateMultiselect('filterFrequency');
@@ -1505,7 +1505,9 @@ function applyFilters() {
         const ackTag = tags.querySelector('.tag-ack');
         const labelTag = tags.querySelector('.tag-label');
         
-        if (receiverIds.length > 0 && stationTag) {
+        // Receiver ID filtering - only apply if not all receivers are selected
+        const allReceiversSelected = receiverIds.length === (RECEIVERS.length + 1); // +1 for __OTHER__
+        if (receiverIds.length > 0 && !allReceiversSelected && stationTag) {
             const stationText = stationTag.textContent.toLowerCase();
             let matchesReceiver = false;
             
@@ -1525,7 +1527,9 @@ function applyFilters() {
             if (!matchesReceiver) show = false;
         }
         
-        if (frequencies.length > 0 && freqTag) {
+        // Frequency filtering - only apply if not all frequencies are selected
+        const allFrequenciesSelected = frequencies.length === (Object.keys(CHANNELS).length + 1); // +1 for __OTHER__
+        if (frequencies.length > 0 && !allFrequenciesSelected && freqTag) {
             let matchesFrequency = false;
             const freqText = freqTag.textContent;
             
@@ -2606,7 +2610,9 @@ function applyFilters() {
         const ackTag = tags.querySelector('.tag-ack');
         const labelTag = tags.querySelector('.tag-label');
         
-        if (receiverIds.length > 0 && stationTag) {
+        // Receiver ID filtering - only apply if not all receivers are selected
+        const allReceiversSelected = receiverIds.length === (RECEIVERS.length + 1); // +1 for __OTHER__
+        if (receiverIds.length > 0 && !allReceiversSelected && stationTag) {
             const stationText = stationTag.textContent.toLowerCase();
             let matchesReceiver = false;
             
@@ -2626,7 +2632,9 @@ function applyFilters() {
             if (!matchesReceiver) show = false;
         }
         
-        if (frequencies.length > 0 && freqTag) {
+        // Frequency filtering - only apply if not all frequencies are selected
+        const allFrequenciesSelected = frequencies.length === (Object.keys(CHANNELS).length + 1); // +1 for __OTHER__
+        if (frequencies.length > 0 && !allFrequenciesSelected && freqTag) {
             let matchesFrequency = false;
             const freqText = freqTag.textContent;
             
