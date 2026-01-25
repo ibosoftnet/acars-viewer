@@ -13,6 +13,10 @@ ob_start();
 // Include configuration first (needed for constants)
 require_once 'data-link-config.php';
 
+// Include receiver and channel lists early (needed for history mode filtering)
+include 'data/receiver-list.php';
+include 'data/channel-list.php';
+
 // Determine mode: 'live' (default) or 'history'
 $isHistoryMode = isset($_GET['history']);
 
@@ -342,8 +346,6 @@ if ($isHistoryMode) {
 // Include common resources
 include 'page-data-link-style.php';
 include 'data/receiver-info-config.php';
-include 'data/receiver-list.php';
-include 'data/channel-list.php';
 include 'load-message-labels.php';
 
 // Get label arrays from config
