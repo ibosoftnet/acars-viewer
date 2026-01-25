@@ -42,6 +42,14 @@ if ($isHistoryMode) {
     $filterReceiverIds = isset($_GET['filterReceiverId']) ? (is_array($_GET['filterReceiverId']) ? $_GET['filterReceiverId'] : [$_GET['filterReceiverId']]) : [];
     $filterFrequencies = isset($_GET['filterFrequency']) ? (is_array($_GET['filterFrequency']) ? $_GET['filterFrequency'] : [$_GET['filterFrequency']]) : [];
     $filterNetworkTypes = isset($_GET['filterNetworkType']) ? (is_array($_GET['filterNetworkType']) ? $_GET['filterNetworkType'] : [$_GET['filterNetworkType']]) : [];
+    
+    // DEBUG: Check if network types are received
+    if (!empty($filterNetworkTypes)) {
+        echo "<script>alert('Network Types Received: " . json_encode($filterNetworkTypes) . "');</script>";
+    } else {
+        echo "<script>alert('Network Types EMPTY!');</script>";
+    }
+    
     $filterRegistration = $_GET['filterRegistration'] ?? '';
     $filterFlightNumber = $_GET['filterFlightNumber'] ?? '';
     $filterAckValues = isset($_GET['filterAck']) ? (is_array($_GET['filterAck']) ? $_GET['filterAck'] : [$_GET['filterAck']]) : [];
@@ -171,9 +179,6 @@ if ($isHistoryMode) {
                 $appConditions = [];
                 $hasOther = false;
                 
-                // DEBUG
-                error_log("DEBUG Network Types: " . print_r($filterNetworkTypes, true));
-                
                 foreach ($filterNetworkTypes as $netType) {
                     if ($netType === 'ACARS') {
                         $appConditions[] = "(app_name IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl'))";
@@ -191,8 +196,10 @@ if ($isHistoryMode) {
                 
                 if (!empty($appConditions)) {
                     $finalCondition = "(" . implode(" OR ", $appConditions) . ")";
-                    error_log("DEBUG Network SQL Condition: " . $finalCondition);
                     $whereConditions[] = $finalCondition;
+                    
+                    // DEBUG: Show on page
+                    echo "<script>alert('Network Types: " . json_encode($filterNetworkTypes) . "\\n\\nSQL Condition: " . addslashes($finalCondition) . "');</script>";
                 }
             }
             
