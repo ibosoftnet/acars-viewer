@@ -171,6 +171,9 @@ if ($isHistoryMode) {
                 $appConditions = [];
                 $hasOther = false;
                 
+                // DEBUG
+                error_log("DEBUG Network Types: " . print_r($filterNetworkTypes, true));
+                
                 foreach ($filterNetworkTypes as $netType) {
                     if ($netType === 'ACARS') {
                         $appConditions[] = "(app_name IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl'))";
@@ -187,7 +190,9 @@ if ($isHistoryMode) {
                 }
                 
                 if (!empty($appConditions)) {
-                    $whereConditions[] = "(" . implode(" OR ", $appConditions) . ")";
+                    $finalCondition = "(" . implode(" OR ", $appConditions) . ")";
+                    error_log("DEBUG Network SQL Condition: " . $finalCondition);
+                    $whereConditions[] = $finalCondition;
                 }
             }
             
