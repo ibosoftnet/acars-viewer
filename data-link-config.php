@@ -339,13 +339,13 @@ $LABEL_DEFINITIONS = [
     ],
     
     // ===============================
-    // Service Related - Various Reports [Qx]
+    // Service Related - OOOI
     // ===============================
     
     // Link Test
     'LINK_TEST' => [
         'labels' => ['Q0'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Link Test',
         'display_name' => 'Link Test [Q0]'
     ],
@@ -353,7 +353,7 @@ $LABEL_DEFINITIONS = [
     // Departure/Arrival Reports (IATA Airport Code)
     'DEPARTURE_ARRIVAL' => [
         'labels' => ['Q1'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Departure/Arrival Reports',
         'display_name' => 'Departure/Arrival Reports (IATA Airport Code) [Q1]'
     ],
@@ -361,7 +361,7 @@ $LABEL_DEFINITIONS = [
     // ETA Report
     'ETA_REPORT' => [
         'labels' => ['Q2'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'ETA Report',
         'display_name' => 'ETA Report [Q2]'
     ],
@@ -369,7 +369,7 @@ $LABEL_DEFINITIONS = [
     // Clock Update Advisory
     'CLOCK_UPDATE' => [
         'labels' => ['Q3'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Clock Update Advisory',
         'display_name' => 'Clock Update Advisory [Q3]'
     ],
@@ -377,7 +377,7 @@ $LABEL_DEFINITIONS = [
     // Delay Message
     'DELAY_MESSAGE' => [
         'labels' => ['Q7'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Delay Message',
         'display_name' => 'Delay Message [Q7]'
     ],
@@ -385,7 +385,7 @@ $LABEL_DEFINITIONS = [
     // Out/Fuel Report (IATA Airport Code)
     'OUT_FUEL_IATA' => [
         'labels' => ['QA'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Out/Fuel Report',
         'display_name' => 'Out/Fuel Report (IATA Airport Code) [QA]'
     ],
@@ -393,7 +393,7 @@ $LABEL_DEFINITIONS = [
     // OFF Report (IATA Airport Code)
     'OFF_IATA' => [
         'labels' => ['QB'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OFF Report',
         'display_name' => 'OFF Report (IATA Airport Code) [QB]'
     ],
@@ -401,7 +401,7 @@ $LABEL_DEFINITIONS = [
     // ON Report (IATA Airport Code)
     'ON_IATA' => [
         'labels' => ['QC'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'ON Report',
         'display_name' => 'ON Report (IATA Airport Code) [QC]'
     ],
@@ -409,7 +409,7 @@ $LABEL_DEFINITIONS = [
     // IN/Fuel Report (IATA Airport Code)
     'IN_FUEL_IATA' => [
         'labels' => ['QD'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'IN/Fuel Report',
         'display_name' => 'IN/Fuel Report (IATA Airport Code) [QD]'
     ],
@@ -417,7 +417,7 @@ $LABEL_DEFINITIONS = [
     // OUT/Fuel Destination Report (IATA Airport Code)
     'OUT_FUEL_DEST_IATA' => [
         'labels' => ['QE'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OUT/Fuel Destination Report',
         'display_name' => 'OUT/Fuel Destination Report (IATA Airport Code) [QE]'
     ],
@@ -425,7 +425,7 @@ $LABEL_DEFINITIONS = [
     // OFF/Destination Report (IATA Airport Code)
     'OFF_DEST_IATA' => [
         'labels' => ['QF'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OFF/Destination Report',
         'display_name' => 'OFF/Destination Report (IATA Airport Code) [QF]'
     ],
@@ -433,7 +433,7 @@ $LABEL_DEFINITIONS = [
     // OUT/Return IN Report (IATA Airport Code)
     'OUT_RETURN_IATA' => [
         'labels' => ['QG'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OUT/Return IN Report',
         'display_name' => 'OUT/Return IN Report (IATA Airport Code) [QG]'
     ],
@@ -441,7 +441,7 @@ $LABEL_DEFINITIONS = [
     // OUT Report - (IATA Airport Code)
     'OUT_IATA' => [
         'labels' => ['QH'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OUT Report',
         'display_name' => 'OUT Report - (IATA Airport Code) [QH]'
     ],
@@ -449,7 +449,7 @@ $LABEL_DEFINITIONS = [
     // Landing Report (IATA Airport Code)
     'LANDING_IATA' => [
         'labels' => ['QK'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Landing Report',
         'display_name' => 'Landing Report (IATA Airport Code) [QK]'
     ],
@@ -457,7 +457,7 @@ $LABEL_DEFINITIONS = [
     // Arrival Report (IATA Airport Code)
     'ARRIVAL_IATA' => [
         'labels' => ['QL'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Arrival Report',
         'display_name' => 'Arrival Report (IATA Airport Code) [QL]'
     ],
@@ -465,7 +465,7 @@ $LABEL_DEFINITIONS = [
     // Arrival Information Report (IATA Airport Code)
     'ARRIVAL_INFO_IATA' => [
         'labels' => ['QM'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Arrival Information Report',
         'display_name' => 'Arrival Information Report (IATA Airport Code) [QM]'
     ],
@@ -473,7 +473,7 @@ $LABEL_DEFINITIONS = [
     // Diversion Report (IATA Airport Code)
     'DIVERSION_IATA' => [
         'labels' => ['QN'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'Diversion Report',
         'display_name' => 'Diversion Report (IATA Airport Code) [QN]'
     ],
@@ -481,7 +481,7 @@ $LABEL_DEFINITIONS = [
     // OUT Report (ICAO Airport Code)
     'OUT_ICAO' => [
         'labels' => ['QP'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OUT Report',
         'display_name' => 'OUT Report (ICAO Airport Code) [QP]'
     ],
@@ -489,7 +489,7 @@ $LABEL_DEFINITIONS = [
     // OFF Report (ICAO Airport Code)
     'OFF_ICAO' => [
         'labels' => ['QQ'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OFF Report',
         'display_name' => 'OFF Report (ICAO Airport Code) [QQ]'
     ],
@@ -497,7 +497,7 @@ $LABEL_DEFINITIONS = [
     // ON Report (ICAO Airport Code)
     'ON_ICAO' => [
         'labels' => ['QR'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'ON Report',
         'display_name' => 'ON Report (ICAO Airport Code) [QR]'
     ],
@@ -505,7 +505,7 @@ $LABEL_DEFINITIONS = [
     // IN Report (ICAO Airport Code)
     'IN_ICAO' => [
         'labels' => ['QS'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'IN Report',
         'display_name' => 'IN Report (ICAO Airport Code) [QS]'
     ],
@@ -513,7 +513,7 @@ $LABEL_DEFINITIONS = [
     // OUT/Return IN Report (ICAO Airport Code)
     'OUT_RETURN_ICAO' => [
         'labels' => ['QT'],
-        'system' => 'Service Related - Various Reports [Qx]',
+        'system' => 'Service Related - OOOI',
         'operation' => 'OUT/Return IN Report',
         'display_name' => 'OUT/Return IN Report (ICAO Airport Code) [QT]'
     ],
