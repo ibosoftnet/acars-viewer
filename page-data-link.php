@@ -42,14 +42,6 @@ if ($isHistoryMode) {
     $filterReceiverIds = isset($_GET['filterReceiverId']) ? (is_array($_GET['filterReceiverId']) ? $_GET['filterReceiverId'] : [$_GET['filterReceiverId']]) : [];
     $filterFrequencies = isset($_GET['filterFrequency']) ? (is_array($_GET['filterFrequency']) ? $_GET['filterFrequency'] : [$_GET['filterFrequency']]) : [];
     $filterNetworkTypes = isset($_GET['filterNetworkType']) ? (is_array($_GET['filterNetworkType']) ? $_GET['filterNetworkType'] : [$_GET['filterNetworkType']]) : [];
-    
-    // DEBUG: Check if network types are received
-    if (!empty($filterNetworkTypes)) {
-        echo "<script>alert('Network Types Received: " . json_encode($filterNetworkTypes) . "');</script>";
-    } else {
-        echo "<script>alert('Network Types EMPTY!');</script>";
-    }
-    
     $filterRegistration = $_GET['filterRegistration'] ?? '';
     $filterFlightNumber = $_GET['filterFlightNumber'] ?? '';
     $filterAckValues = isset($_GET['filterAck']) ? (is_array($_GET['filterAck']) ? $_GET['filterAck'] : [$_GET['filterAck']]) : [];
@@ -195,28 +187,36 @@ if ($isHistoryMode) {
                 }
                 
                 if (!empty($appConditions)) {
-                    $finalCondition = "(" . implode(" OR ", $appConditions) . ")";
-                    $whereConditions[] = $finalCondition;
-                    
-                    // DEBUG: Show on page
-                    echo "<script>alert('Network Types: " . json_encode($filterNetworkTypes) . "\\n\\nSQL Condition: " . addslashes($finalCondition) . "');</script>";
+                    $whereConditions[] = "(" . implode(" OR ", $appConditions) . ")";
                 }
             }
             
-            if (!empty($filterRegistration)) {
+            // Check if only ACARS is selected (not ATN or Other)
+            $onlyACARSSelected = !empty($filterNetworkTypes) && 
+                                 in_array('ACARS', $filterNetworkTypes) && 
+                                 !in_array('ATN', $filterNetworkTypes) && 
+                                 !in_array('Other', $filterNetworkTypes);
+            
+            // Check if no network type is selected or ACARS is among selections
+            $shouldApplyACARSFilters = empty($filterNetworkTypes) || in_array('ACARS', $filterNetworkTypes);
+            
+            // Collect ACARS-only filter conditions
+            $acarsonlyConditions = [];
+            
+            if ($shouldApplyACARSFilters && !empty($filterRegistration)) {
                 $regWithoutDash = str_replace('-', '', $filterRegistration);
-                $whereConditions[] = "(REPLACE(tail, '-', '') LIKE ?)";
+                $acarsonlyConditions[] = "(REPLACE(tail, '-', '') LIKE ?)";
                 $bindTypes .= "s";
                 $bindParams[] = "%{$regWithoutDash}%";
             }
             
-            if (!empty($filterFlightNumber)) {
-                $whereConditions[] = "flight LIKE ?";
+            if ($shouldApplyACARSFilters && !empty($filterFlightNumber)) {
+                $acarsonlyConditions[] = "flight LIKE ?";
                 $bindTypes .= "s";
                 $bindParams[] = "%{$filterFlightNumber}%";
             }
             
-            if (!empty($filterAckValues)) {
+            if ($shouldApplyACARSFilters && !empty($filterAckValues)) {
                 $ackConditions = [];
                 foreach ($filterAckValues as $ackVal) {
                     if ($ackVal === 'ACK') {
@@ -226,7 +226,7 @@ if ($isHistoryMode) {
                     }
                 }
                 if (!empty($ackConditions)) {
-                    $whereConditions[] = "(" . implode(" OR ", $ackConditions) . ")";
+                    $acarsonlyConditions[] = "(" . implode(" OR ", $ackConditions) . ")";
                 }
             }
             
@@ -234,7 +234,7 @@ if ($isHistoryMode) {
             $allFilterDefinedLabels = getAllDefinedLabels();
             
             // Note: filterDataLinkSystem (label filtering) is now in SQL
-            if (!empty($filterDataLinkSystem)) {
+            if ($shouldApplyACARSFilters && !empty($filterDataLinkSystem)) {
                 $labelConditions = [];
                 $hasOtherLabeled = false;
                 
@@ -274,7 +274,23 @@ if ($isHistoryMode) {
                 }
                 
                 if (!empty($labelConditions)) {
-                    $whereConditions[] = "(" . implode(" OR ", $labelConditions) . ")";
+                    $acarsonlyConditions[] = "(" . implode(" OR ", $labelConditions) . ")";
+                }
+            }
+            
+            // If ACARS-only filters exist AND ATN/Other are also selected,
+            // wrap them so they only apply to ACARS messages
+            if (!empty($acarsonlyConditions)) {
+                if ($onlyACARSSelected) {
+                    // Only ACARS selected: apply filters normally
+                    foreach ($acarsonlyConditions as $condition) {
+                        $whereConditions[] = $condition;
+                    }
+                } else {
+                    // ACARS + ATN/Other selected: filters only apply to ACARS messages
+                    // (app_name IN ACARS AND filters) OR (app_name NOT IN ACARS)
+                    $acarsFiltersSQL = implode(" AND ", $acarsonlyConditions);
+                    $whereConditions[] = "((app_name IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl') AND {$acarsFiltersSQL}) OR (app_name NOT IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl')))";
                 }
             }
             
@@ -289,9 +305,6 @@ if ($isHistoryMode) {
             }
             
             $whereClause = implode(" AND ", $whereConditions);
-            
-            // DEBUG: Show full WHERE clause
-            echo "<script>alert('Full WHERE Clause:\\n\\n" . addslashes($whereClause) . "');</script>";
             
             // Count total messages
             $countSql = "SELECT COUNT(*) as total FROM messages_json_raw WHERE {$whereClause}";
