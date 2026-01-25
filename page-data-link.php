@@ -169,12 +169,23 @@ if ($isHistoryMode) {
             
             if (!empty($filterNetworkTypes)) {
                 $appConditions = [];
+                $hasOther = false;
+                
                 foreach ($filterNetworkTypes as $netType) {
                     if ($netType === 'ACARS') {
-                        $appConditions[] = "(app_name = 'acarsdec' OR app_name = 'vdlm2dec')";
+                        $appConditions[] = "(app_name IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl'))";
+                    } elseif ($netType === 'ATN') {
+                        $appConditions[] = "(app_name = 'dummyapp')";
+                    } elseif ($netType === 'Other') {
+                        $hasOther = true;
                     }
-                    // ATN not implemented yet - no filter for it
                 }
+                
+                // Add "Other" condition - app_name not matching ACARS or ATN
+                if ($hasOther) {
+                    $appConditions[] = "(app_name NOT IN ('acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl', 'dummyapp') OR app_name IS NULL)";
+                }
+                
                 if (!empty($appConditions)) {
                     $whereConditions[] = "(" . implode(" OR ", $appConditions) . ")";
                 }
