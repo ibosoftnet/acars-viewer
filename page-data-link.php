@@ -290,6 +290,9 @@ if ($isHistoryMode) {
             
             $whereClause = implode(" AND ", $whereConditions);
             
+            // DEBUG: Show full WHERE clause
+            echo "<script>alert('Full WHERE Clause:\\n\\n" . addslashes($whereClause) . "');</script>";
+            
             // Count total messages
             $countSql = "SELECT COUNT(*) as total FROM messages_json_raw WHERE {$whereClause}";
             $countStmt = $historyConn->prepare($countSql);
