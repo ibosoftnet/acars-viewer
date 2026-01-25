@@ -100,22 +100,67 @@ if ($isHistoryMode) {
             
             if (!empty($filterReceiverIds)) {
                 $receiverConditions = [];
+                $hasOther = false;
+                
                 foreach ($filterReceiverIds as $receiverId) {
-                    $receiverConditions[] = "station_id LIKE ?";
-                    $bindTypes .= "s";
-                    $bindParams[] = "%{$receiverId}%";
+                    if ($receiverId === '__OTHER__') {
+                        $hasOther = true;
+                    } else {
+                        $receiverConditions[] = "station_id LIKE ?";
+                        $bindTypes .= "s";
+                        $bindParams[] = "%{$receiverId}%";
+                    }
                 }
-                $whereConditions[] = "(" . implode(" OR ", $receiverConditions) . ")";
+                
+                // Add "Other" condition - station_id not matching any known receiver
+                if ($hasOther && !empty($RECEIVERS)) {
+                    $otherConditions = [];
+                    foreach ($RECEIVERS as $knownReceiver) {
+                        $otherConditions[] = "station_id NOT LIKE ?";
+                        $bindTypes .= "s";
+                        $bindParams[] = "%{$knownReceiver}%";
+                    }
+                    if (!empty($otherConditions)) {
+                        $receiverConditions[] = "(" . implode(" AND ", $otherConditions) . ")";
+                    }
+                }
+                
+                if (!empty($receiverConditions)) {
+                    $whereConditions[] = "(" . implode(" OR ", $receiverConditions) . ")";
+                }
             }
             
             if (!empty($filterFrequencies)) {
                 $freqConditions = [];
+                $hasOther = false;
+                
                 foreach ($filterFrequencies as $freq) {
-                    $freqConditions[] = "freq = ?";
-                    $bindTypes .= "s";
-                    $bindParams[] = $freq;
+                    if ($freq === '__OTHER__') {
+                        $hasOther = true;
+                    } else {
+                        $freqConditions[] = "freq = ?";
+                        $bindTypes .= "s";
+                        $bindParams[] = $freq;
+                    }
                 }
-                $whereConditions[] = "(" . implode(" OR ", $freqConditions) . ")";
+                
+                // Add "Other" condition - frequency not matching any known channel
+                if ($hasOther && !empty($CHANNELS)) {
+                    $knownFreqs = array_keys($CHANNELS);
+                    $otherConditions = [];
+                    foreach ($knownFreqs as $knownFreq) {
+                        $otherConditions[] = "freq != ?";
+                        $bindTypes .= "s";
+                        $bindParams[] = $knownFreq;
+                    }
+                    if (!empty($otherConditions)) {
+                        $freqConditions[] = "(" . implode(" AND ", $otherConditions) . ")";
+                    }
+                }
+                
+                if (!empty($freqConditions)) {
+                    $whereConditions[] = "(" . implode(" OR ", $freqConditions) . ")";
+                }
             }
             
             if (!empty($filterNetworkTypes)) {
@@ -871,6 +916,17 @@ function populateDropdowns() {
             label.innerHTML = `<input type="checkbox" value="${receiver}" ${checked} onchange="updateMultiselect('filterReceiverId')" data-ui-only="true"><span>${receiver}</span>`;
             receiverContainer.appendChild(label);
         });
+        
+        // Add "Other" option for unknown receivers
+        const otherChecked = SELECTED_RECEIVERS.length === 0 || SELECTED_RECEIVERS.includes('__OTHER__') ? 'checked' : '';
+        const otherLabel = document.createElement('label');
+        otherLabel.className = 'multiselect-option';
+        otherLabel.style.borderTop = '1px solid #ddd';
+        otherLabel.style.marginTop = '4px';
+        otherLabel.style.paddingTop = '8px';
+        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterReceiverId')" data-ui-only="true"><span style="font-style: italic;">Other (Unknown Receivers)</span>`;
+        receiverContainer.appendChild(otherLabel);
+        
         updateMultiselect('filterReceiverId');
     }
     
@@ -885,6 +941,17 @@ function populateDropdowns() {
             label.innerHTML = `<input type="checkbox" value="${freq}" ${checked} onchange="updateMultiselect('filterFrequency')" data-ui-only="true"><span>${freq} MHz - ${name}</span>`;
             frequencyContainer.appendChild(label);
         });
+        
+        // Add "Other" option for unknown frequencies
+        const otherChecked = SELECTED_FREQUENCIES.length === 0 || SELECTED_FREQUENCIES.includes('__OTHER__') ? 'checked' : '';
+        const otherLabel = document.createElement('label');
+        otherLabel.className = 'multiselect-option';
+        otherLabel.style.borderTop = '1px solid #ddd';
+        otherLabel.style.marginTop = '4px';
+        otherLabel.style.paddingTop = '8px';
+        otherLabel.innerHTML = `<input type="checkbox" value="__OTHER__" ${otherChecked} onchange="updateMultiselect('filterFrequency')" data-ui-only="true"><span style="font-style: italic;">Other (Unknown Frequencies)</span>`;
+        frequencyContainer.appendChild(otherLabel);
+        
         updateMultiselect('filterFrequency');
     }
     
@@ -1440,11 +1507,47 @@ function applyFilters() {
         
         if (receiverIds.length > 0 && stationTag) {
             const stationText = stationTag.textContent.toLowerCase();
-            if (!receiverIds.some(id => stationText.includes(id))) show = false;
+            let matchesReceiver = false;
+            
+            // Check known receivers
+            if (receiverIds.some(id => id !== '__other__' && stationText.includes(id))) {
+                matchesReceiver = true;
+            }
+            
+            // Check "Other" option - if selected and station is not in known RECEIVERS list
+            if (receiverIds.includes('__other__')) {
+                const isKnown = RECEIVERS.some(receiver => stationText.includes(receiver.toLowerCase()));
+                if (!isKnown) {
+                    matchesReceiver = true;
+                }
+            }
+            
+            if (!matchesReceiver) show = false;
         }
         
         if (frequencies.length > 0 && freqTag) {
-            if (!frequencies.some(freq => freqTag.textContent.includes(freq))) show = false;
+            let matchesFrequency = false;
+            const freqText = freqTag.textContent;
+            
+            // Check known frequencies
+            if (frequencies.some(freq => freq !== '__other__' && freqText.includes(freq))) {
+                matchesFrequency = true;
+            }
+            
+            // Check "Other" option - if selected and frequency is not in known CHANNELS list
+            if (frequencies.includes('__other__')) {
+                // Extract frequency value from tag (e.g., "131.725 MHz" or "131.725 MHz - Name")
+                const freqMatch = freqText.match(/([\d.]+)\s*MHz/);
+                if (freqMatch) {
+                    const freqValue = freqMatch[1];
+                    const isKnown = Object.keys(CHANNELS).includes(freqValue);
+                    if (!isKnown) {
+                        matchesFrequency = true;
+                    }
+                }
+            }
+            
+            if (!matchesFrequency) show = false;
         }
         
         // Network Type filtering (only apply if not all options are selected)
@@ -2505,11 +2608,47 @@ function applyFilters() {
         
         if (receiverIds.length > 0 && stationTag) {
             const stationText = stationTag.textContent.toLowerCase();
-            if (!receiverIds.some(id => stationText.includes(id))) show = false;
+            let matchesReceiver = false;
+            
+            // Check known receivers
+            if (receiverIds.some(id => id !== '__other__' && stationText.includes(id))) {
+                matchesReceiver = true;
+            }
+            
+            // Check "Other" option - if selected and station is not in known RECEIVERS list
+            if (receiverIds.includes('__other__')) {
+                const isKnown = RECEIVERS.some(receiver => stationText.includes(receiver.toLowerCase()));
+                if (!isKnown) {
+                    matchesReceiver = true;
+                }
+            }
+            
+            if (!matchesReceiver) show = false;
         }
         
         if (frequencies.length > 0 && freqTag) {
-            if (!frequencies.some(freq => freqTag.textContent.includes(freq))) show = false;
+            let matchesFrequency = false;
+            const freqText = freqTag.textContent;
+            
+            // Check known frequencies
+            if (frequencies.some(freq => freq !== '__other__' && freqText.includes(freq))) {
+                matchesFrequency = true;
+            }
+            
+            // Check "Other" option - if selected and frequency is not in known CHANNELS list
+            if (frequencies.includes('__other__')) {
+                // Extract frequency value from tag (e.g., "131.725 MHz" or "131.725 MHz - Name")
+                const freqMatch = freqText.match(/([\d.]+)\s*MHz/);
+                if (freqMatch) {
+                    const freqValue = freqMatch[1];
+                    const isKnown = Object.keys(CHANNELS).includes(freqValue);
+                    if (!isKnown) {
+                        matchesFrequency = true;
+                    }
+                }
+            }
+            
+            if (!matchesFrequency) show = false;
         }
         
         // Network Type filtering (only apply if not all options are selected)
