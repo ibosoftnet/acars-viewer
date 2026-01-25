@@ -678,43 +678,53 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                                     </span>
                                 <?php endif; ?>
                                 <?php if (isset($msg['app']['name'])): ?>
-                                    <span class="tag tag-app">
-                                        <?php 
-                                        if ($msg['app']['name'] === 'acarsdec') echo 'ACARS';
-                                        elseif ($msg['app']['name'] === 'vdlm2dec') echo 'CPDLC';
-                                        else echo 'Other';
-                                        ?>
-                                    </span>
+                                    <?php 
+                                    $appName = strtolower($msg['app']['name']);
+                                    $networkType = 'Other';
+                                    if (in_array($appName, ['acarsdec', 'vdlm2dec', 'jaero', 'dumphfdl'])) {
+                                        $networkType = 'ACARS';
+                                    } elseif (in_array($appName, ['dummyapp'])) {
+                                        $networkType = 'ATN';
+                                    }
+                                    $isACARSNetwork = ($networkType === 'ACARS');
+                                    ?>
+                                    <span class="tag tag-app"><?php echo $networkType; ?></span>
+                                <?php else: ?>
+                                    <?php $isACARSNetwork = false; ?>
                                 <?php endif; ?>
-                                <?php if (isset($msg['tail'])): ?>
-                                    <span class="tag tag-tail"><?php echo htmlspecialchars($msg['tail']); ?></span>
-                                <?php endif; ?>
-                                <?php if (isset($msg['flight'])): ?>
-                                    <span class="tag tag-flight"><?php echo htmlspecialchars($msg['flight']); ?></span>
-                                <?php endif; ?>
-                                <?php if (isset($msg['ack'])): ?>
-                                    <span class="tag tag-ack"><?php echo $msg['ack'] ? 'ACK' : 'NO ACK'; ?></span>
-                                <?php endif; ?>
-                                <?php if (isset($msg['label'])): ?>
-                                    <span class="tag tag-label">
-                                        <?php 
-                                        $labelCode = $msg['label'];
-                                        echo htmlspecialchars($labelCode);
-                                        if (isset($MESSAGE_LABEL_DESCRIPTIONS[$labelCode])) {
-                                            $info = $MESSAGE_LABEL_DESCRIPTIONS[$labelCode];
-                                            $display = htmlspecialchars($info['explanation']);
-                                            if (!empty($info['direction'])) {
-                                                $display .= ' — ' . htmlspecialchars($info['direction']);
+                                
+                                <?php if ($isACARSNetwork): ?>
+                                    <!-- ACARS Network Only Tags -->
+                                    <?php if (isset($msg['tail'])): ?>
+                                        <span class="tag tag-tail"><?php echo htmlspecialchars($msg['tail']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if (isset($msg['flight'])): ?>
+                                        <span class="tag tag-flight"><?php echo htmlspecialchars($msg['flight']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if (isset($msg['ack'])): ?>
+                                        <span class="tag tag-ack"><?php echo $msg['ack'] ? 'ACK' : 'NO ACK'; ?></span>
+                                    <?php endif; ?>
+                                    <?php if (isset($msg['label'])): ?>
+                                        <span class="tag tag-label">
+                                            <?php 
+                                            $labelCode = $msg['label'];
+                                            echo htmlspecialchars($labelCode);
+                                            if (isset($MESSAGE_LABEL_DESCRIPTIONS[$labelCode])) {
+                                                $info = $MESSAGE_LABEL_DESCRIPTIONS[$labelCode];
+                                                $display = htmlspecialchars($info['explanation']);
+                                                if (!empty($info['direction'])) {
+                                                    $display .= ' — ' . htmlspecialchars($info['direction']);
+                                                }
+                                                echo ' (' . $display . ')';
                                             }
-                                            echo ' (' . $display . ')';
-                                        }
-                                        
-                                        // Get Data Link System and Operation Types
-                                        $dlTypes = getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS);
-                                        ?>
-                                    </span>
-                                    <span class="tag tag-dl-system"><?php echo htmlspecialchars($dlTypes['system']); ?></span>
-                                    <span class="tag tag-dl-operation"><?php echo htmlspecialchars($dlTypes['operation']); ?></span>
+                                            
+                                            // Get Data Link System and Operation Types
+                                            $dlTypes = getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS);
+                                            ?>
+                                        </span>
+                                        <span class="tag tag-dl-system"><?php echo htmlspecialchars($dlTypes['system']); ?></span>
+                                        <span class="tag tag-dl-operation"><?php echo htmlspecialchars($dlTypes['operation']); ?></span>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                             <div class="message-content"><?php 
