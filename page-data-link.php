@@ -677,7 +677,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                                         ?>
                                     </span>
                                 <?php endif; ?>
-                                <?php if (isset($msg['app']['name'])): ?>
+                                <?php if (isset($msg['app']['name']) && !empty($msg['app']['name'])): ?>
                                     <?php 
                                     $appName = strtolower($msg['app']['name']);
                                     $networkType = 'Other';
@@ -691,6 +691,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                                     <span class="tag tag-app"><?php echo $networkType; ?></span>
                                 <?php else: ?>
                                     <?php $isACARSNetwork = false; ?>
+                                    <span class="tag tag-app">Other</span>
                                 <?php endif; ?>
                                 
                                 <?php if ($isACARSNetwork): ?>
