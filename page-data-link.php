@@ -1,7 +1,7 @@
 <?php
 // ===============================
 // UNIFIED DATA LINK PAGE
-// Live Feed (default) + History Mode
+// Live Messages (default) + History Mode
 // ===============================
 
 // Enable error handling
@@ -416,7 +416,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
 <main class="main px-4">
     <div class="datalink-container">
         <div class="datalink-header">
-            <h2>Data Link - <?php echo $isHistoryMode ? 'Message History' : 'Live Feed'; ?></h2>
+            <h2>Data Link - <?php echo $isHistoryMode ? 'Message History' : 'Live Messages'; ?></h2>
             <div class="connection-status">
                 <?php if ($isHistoryMode): ?>
                     <div style="display: flex; align-items: center; gap: 20px;">
