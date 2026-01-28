@@ -416,8 +416,10 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
 <main class="main px-4">
     <div class="datalink-container">
         <div class="datalink-header">
-            <h2>Data Link - <?php echo $isHistoryMode ? 'Message History' : 'Live Messages'; ?></h2>
-            <a href="https://github.com/ibosoftnet/acars-viewer" target="_blank" style="font-size: 9px; color: rgba(255,255,255,0.6); text-decoration: none; display: block; margin-top: 2px;">Ibosoft ACARS Viewer</a>
+            <div>
+                <h2 style="margin-bottom: 2px;">Data Link - <?php echo $isHistoryMode ? 'Message History' : 'Live Messages'; ?></h2>
+                <a href="https://github.com/ibosoftnet/acars-frontend" target="_blank" style="font-size: 9px; color: rgba(255,255,255,0.6); text-decoration: none;">Ibosoft ACARS Frontend</a>
+            </div>
             <div class="connection-status">
                 <?php if ($isHistoryMode): ?>
                     <div style="display: flex; align-items: center; gap: 20px;">
