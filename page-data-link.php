@@ -417,6 +417,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
     <div class="datalink-container">
         <div class="datalink-header">
             <h2>Data Link - <?php echo $isHistoryMode ? 'Message History' : 'Live Messages'; ?></h2>
+            <a href="https://github.com/ibosoftnet/acars-viewer" target="_blank" style="font-size: 9px; color: rgba(255,255,255,0.6); text-decoration: none; display: block; margin-top: 2px;">Ibosoft ACARS Viewer</a>
             <div class="connection-status">
                 <?php if ($isHistoryMode): ?>
                     <div style="display: flex; align-items: center; gap: 20px;">
@@ -652,7 +653,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
         
         <!-- Legend -->
         <div class="legend-container" style="position: relative;">
-            <button class="receiver-info-btn" onclick="showReceiverInfo()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">Available Receivers and Frequencies</button>
+            <button class="receiver-info-btn" onclick="showReceiverInfo()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%);">Available Receivers and Links</button>
             <div class="legend-label">Legend:</div>
             <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 0px; padding-right: 280px;">
                 <span class="tag tag-timestamp">Date - Time (UTC)</span>
