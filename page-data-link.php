@@ -62,11 +62,31 @@ if ($isHistoryMode) {
     $startTimestamp = strtotime("$startDate $startTime:00");
     $endTimestamp = strtotime("$endDate $endTime:59");
     
-    // Include history database helper
+    // Database connection using environment variables
+    $historyConn = null;
     try {
-        require_once __DIR__ . '/../db-config-history.php';
+        // Get database credentials from environment variables
+        $dbHost = getenv('DATALINK_HISTORY_HOST') ?: $_SERVER['DATALINK_HISTORY_HOST'] ?? null;
+        $dbUser = getenv('DATALINK_HISTORY_USER') ?: $_SERVER['DATALINK_HISTORY_USER'] ?? null;
+        $dbPass = getenv('DATALINK_HISTORY_PASSWORD') ?: $_SERVER['DATALINK_HISTORY_PASSWORD'] ?? null;
+        $dbName = getenv('DATALINK_HISTORY_NAME') ?: $_SERVER['DATALINK_HISTORY_NAME'] ?? null;
         
-        if (!isset($historyConn) || !$historyConn) {
+        if ($dbHost && $dbUser && $dbPass && $dbName) {
+            // Parse host and port
+            $hostParts = explode(':', $dbHost);
+            $host = $hostParts[0];
+            $port = isset($hostParts[1]) ? (int)$hostParts[1] : 3306;
+            
+            // Create connection
+            $historyConn = @mysqli_connect($host, $dbUser, $dbPass, $dbName, $port);
+            
+            if ($historyConn) {
+                mysqli_set_charset($historyConn, "utf8mb4");
+                mysqli_query($historyConn, "SET time_zone = '+00:00'");
+            }
+        }
+        
+        if (!$historyConn) {
             $dbError = true;
             $dbErrorMessage = 'Database connection error.';
         } else {
@@ -373,8 +393,10 @@ if ($isHistoryMode) {
             $dbErrorMessage = 'Database query error: ' . $e->getMessage();
         }
         
-        if (!$dbError && $historyConn) {
-            $historyConn->close();
+        // Close database connection if open
+        if ($historyConn && $historyConn instanceof mysqli) {
+            @mysqli_close($historyConn);
+            $historyConn = null;
         }
     }
 } else {
