@@ -8,6 +8,7 @@
 
 $RECEIVERS = [
     'ANTALYA1',
+    'ANKARA1',
     // Add more receivers here as needed
     // 'ANKARA1',
     // 'ISTANBUL1',
