@@ -2290,6 +2290,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        credentials: 'include',
                         body: JSON.stringify({ label, text })
                     });
                     
@@ -2361,7 +2362,9 @@ function initSSE() {
     const sseUrl = CONFIG.SSE_STREAM_URL;
     
     try {
-        eventSource = new EventSource(sseUrl);
+        // withCredentials lets the browser send the cross-site datalink_session
+        // cookie to the data link backend (subdomain on .ibosoft.net.tr).
+        eventSource = new EventSource(sseUrl, { withCredentials: true });
         
         eventSource.onopen = function(e) {
             // Check TCP status immediately
@@ -2429,7 +2432,7 @@ function updateConnectionStatus(sseConnected, tcpStatus) {
 
 // Check TCP health from backend
 function checkTCPHealth() {
-    fetch(CONFIG.HEALTH_URL)
+    fetch(CONFIG.HEALTH_URL, { credentials: 'include' })
         .then(response => response.json())
         .then(data => {
             tcpConnected = data.tcp_status === 'connected';

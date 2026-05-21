@@ -195,7 +195,7 @@ define('DATALINK_API_PORT', 2053); // Arka yazılımın API port numarası
 define('DATALINK_API_BASE_URL', 'https://' . DATALINK_API_HOST . ':' . DATALINK_API_PORT); // http/https ayarı
 ```
 
-> **Kimlik doğrulama hakkında:** Bu uç yazılım arka yazılımın `/stream` ve `/decode` endpoint'lerine doğrudan tarayıcıdan bağlanır. Arka yazılım tarafında **bağlanma anında** kimlik doğrulaması yapılır (bkz. arka yazılım README'sindeki `[SECURITY]` bölümü). Bu doğrulama, bu projeyle birlikte dağıtılan `jwt-issuer.php` dosyasının (atcweb tarafından `data-link-files/jwt-issuer.php` olarak çağrılır) data-link sayfası yüklenirken set ettiği HttpOnly bir oturum çerezi (`datalink_session`, HS256 imzalı kısa ömürlü JWT) ile gerçekleşir. **Frontend JavaScript'inde herhangi bir anahtar veya token tutulmaz, EventSource ve fetch kodu değişmez** — tarayıcı çerezi otomatik gönderir.
+> **Kimlik doğrulama hakkında:** Bu uç yazılım arka yazılımın `/stream` ve `/decode` endpoint'lerine doğrudan tarayıcıdan bağlanır. Arka yazılım tarafında **bağlanma anında** kimlik doğrulaması yapılır (bkz. arka yazılım README'sindeki `[SECURITY]` bölümü). Bu doğrulama, bu projeyle birlikte dağıtılan `jwt-issuer.php` dosyasının (atcweb tarafından `data-link-files/jwt-issuer.php` olarak çağrılır) data-link sayfası yüklenirken set ettiği HttpOnly bir oturum çerezi (`datalink_session`, HS256 imzalı kısa ömürlü JWT) ile gerçekleşir. **JavaScript tarayıcının yerleşik çerez mekanizmasına güvenir** — arka yazılım farklı bir alt alan adında olduğu için cross-site isteklere çerez eklenebilmesi adına EventSource'a `withCredentials: true` ve fetch çağrılarına `credentials: 'include'` bayrağı verilmiştir. Bu bayraklar dışında JS'de herhangi bir anahtar/token saklanmaz; çerez `HttpOnly` olduğu için JS kodu çerez içeriğini de okuyamaz.
 
 ---
 
@@ -602,7 +602,7 @@ define('DATALINK_API_PORT', 2053); // Backend API port number
 define('DATALINK_API_BASE_URL', 'https://' . DATALINK_API_HOST . ':' . DATALINK_API_PORT); // http/https setting
 ```
 
-> **About authentication:** The frontend connects to the backend's `/stream` and `/decode` endpoints directly from the browser. The backend enforces **connection-level** authentication (see the `[SECURITY]` section in the backend README). The browser carries this credential as an `HttpOnly` session cookie (`datalink_session`, a short-lived HS256 JWT) that atcweb's PHP (`datalink-jwt-issuer.php`) sets when the data-link page loads. **No key or token is held in the frontend JavaScript, and the EventSource/fetch code does not change** — the cookie is sent automatically by the browser.
+> **About authentication:** The frontend connects to the backend's `/stream` and `/decode` endpoints directly from the browser. The backend enforces **connection-level** authentication (see the `[SECURITY]` section in the backend README). The browser carries this credential as an `HttpOnly` session cookie (`datalink_session`, a short-lived HS256 JWT) that the `jwt-issuer.php` file shipped with this project (invoked by atcweb as `data-link-files/jwt-issuer.php`) sets when the data-link page loads. **The JavaScript relies on the browser's built-in cookie machinery** — because the backend lives on a different subdomain, the EventSource is opened with `withCredentials: true` and the fetch calls use `credentials: 'include'` so that the cookie is attached to cross-site requests. Apart from those flags, no key or token is held in JavaScript, and the cookie's `HttpOnly` flag prevents JS from reading its contents.
 
 ---
 
