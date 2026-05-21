@@ -13,6 +13,10 @@ ob_start();
 // Include configuration first (needed for constants)
 require_once 'data-link-config.php';
 
+// Mint the short-lived JWT cookie that gates the data link backend connection.
+// Must run before any output — output buffering (ob_start above) keeps this safe.
+require_once __DIR__ . '/jwt-issuer.php';
+
 // Include receiver and channel lists early (needed for history mode filtering)
 include 'data/receiver-list.php';
 include 'data/channel-list.php';

@@ -195,6 +195,8 @@ define('DATALINK_API_PORT', 2053); // Arka yazılımın API port numarası
 define('DATALINK_API_BASE_URL', 'https://' . DATALINK_API_HOST . ':' . DATALINK_API_PORT); // http/https ayarı
 ```
 
+> **Kimlik doğrulama hakkında:** Bu uç yazılım arka yazılımın `/stream` ve `/decode` endpoint'lerine doğrudan tarayıcıdan bağlanır. Arka yazılım tarafında **bağlanma anında** kimlik doğrulaması yapılır (bkz. arka yazılım README'sindeki `[SECURITY]` bölümü). Bu doğrulama, bu projeyle birlikte dağıtılan `jwt-issuer.php` dosyasının (atcweb tarafından `data-link-files/jwt-issuer.php` olarak çağrılır) data-link sayfası yüklenirken set ettiği HttpOnly bir oturum çerezi (`datalink_session`, HS256 imzalı kısa ömürlü JWT) ile gerçekleşir. **Frontend JavaScript'inde herhangi bir anahtar veya token tutulmaz, EventSource ve fetch kodu değişmez** — tarayıcı çerezi otomatik gönderir.
+
 ---
 
 ### Gözetim Haritası Entegrasyonu:
@@ -599,6 +601,8 @@ define('DATALINK_API_HOST', 'dlink-api.ibosoft.net.tr'); // Backend API host nam
 define('DATALINK_API_PORT', 2053); // Backend API port number
 define('DATALINK_API_BASE_URL', 'https://' . DATALINK_API_HOST . ':' . DATALINK_API_PORT); // http/https setting
 ```
+
+> **About authentication:** The frontend connects to the backend's `/stream` and `/decode` endpoints directly from the browser. The backend enforces **connection-level** authentication (see the `[SECURITY]` section in the backend README). The browser carries this credential as an `HttpOnly` session cookie (`datalink_session`, a short-lived HS256 JWT) that atcweb's PHP (`datalink-jwt-issuer.php`) sets when the data-link page loads. **No key or token is held in the frontend JavaScript, and the EventSource/fetch code does not change** — the cookie is sent automatically by the browser.
 
 ---
 
