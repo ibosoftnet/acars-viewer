@@ -1,22 +1,4 @@
 <?php
-// ============================================================
-// TEMPORARY DEBUG — remove after diagnosing the 401 issue.
-// Logs the state of $sso, headers, env and setcookie() result
-// to the PHP error log on each request to /data-link.
-// ============================================================
-error_log('JWT-DEBUG reached jwt-issuer.php');
-$_jwt_dbg_f = ''; $_jwt_dbg_l = 0;
-error_log('JWT-DEBUG headers_sent: ' . (headers_sent($_jwt_dbg_f, $_jwt_dbg_l) ? "YES at {$_jwt_dbg_f}:{$_jwt_dbg_l}" : 'no'));
-error_log('JWT-DEBUG sso_isset: ' . (isset($sso) ? 'yes' : 'NO'));
-error_log('JWT-DEBUG sso_loggedin: ' . ((isset($sso) && $sso->isLoggedIn()) ? 'yes' : 'no'));
-error_log('JWT-DEBUG secret_env: ' . (getenv('DATALINK_JWT_SECRET') ? 'SET' : 'EMPTY'));
-error_log('JWT-DEBUG php_version: ' . PHP_VERSION);
-$_jwt_dbg_ret = setcookie('jwt_debug_canary', 'test', ['path' => '/']);
-error_log('JWT-DEBUG setcookie_returned: ' . ($_jwt_dbg_ret ? 'true' : 'FALSE'));
-// ============================================================
-// END TEMPORARY DEBUG
-// ============================================================
-
 /**
  * Data Link Backend — Session JWT Issuer
  *
