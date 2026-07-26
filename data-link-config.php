@@ -15,9 +15,9 @@ define('DATALINK_HEALTH_URL', DATALINK_API_BASE_URL . '/health');
 // {REG} placeholder will be replaced with aircraft registration (without dashes)
 // {DATE} placeholder will be replaced with date in Y-m-d format (UTC)
 // {TIMESTAMP} placeholder will be replaced with Unix timestamp
-define('SURVEILLANCE_MAP_BASE_URL', 'https://atc.ibosoft.net.tr/surveillance/');
+define('SURVEILLANCE_MAP_BASE_URL', 'https://ais.ibosoft.net.tr/map');
 define('SURVEILLANCE_MAP_URL_QUERY', '?reg={REG}&noIsolation');
-define('SURVEILLANCE_MAP_BASE_URL_HISTORY', 'https://atc.ibosoft.net.tr/surveillance/');
+define('SURVEILLANCE_MAP_BASE_URL_HISTORY', 'https://ais.ibosoft.net.tr/map');
 define('SURVEILLANCE_MAP_URL_QUERY_HISTORY', '?reg={REG}&showTrace={DATE}&timestamp={TIMESTAMP}&zoom=7.5');
 
 // Default Filter Settings

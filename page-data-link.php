@@ -21,6 +21,11 @@ require_once __DIR__ . '/jwt-issuer.php';
 include 'data/receiver-list.php';
 include 'data/channel-list.php';
 
+// Base path this page was actually reached under (whatever route-mappings.php
+// maps to this file today) — used to self-reference the page without hardcoding
+// the route name, so it stays correct if the route is ever renamed.
+$basePath = '/' . trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+
 // Determine mode: 'live' (default) or 'history'
 $isHistoryMode = isset($_GET['history']);
 
@@ -481,7 +486,7 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
             <div class="filter-bar-content" id="filterBarContent">
                 <?php if ($isHistoryMode): ?>
                 <!-- History Mode: Form-based filters -->
-                <form method="GET" action="/data-link" id="additionalFiltersForm">
+                <form method="GET" action="<?php echo htmlspecialchars($basePath); ?>" id="additionalFiltersForm">
                     <input type="hidden" name="history" value="1" />
                     <input type="hidden" name="hideIncomplete" id="hideIncompleteInput" value="<?php echo $hideIncompleteMessages ? '1' : '0'; ?>" />
                     <div id="hiddenInputsContainer"></div>
@@ -900,6 +905,7 @@ const MESSAGE_LABEL_DESCRIPTIONS = <?php echo json_encode($MESSAGE_LABEL_DESCRIP
 // COMMON VARIABLES
 // ===============================
 const IS_HISTORY_MODE = <?php echo $isHistoryMode ? 'true' : 'false'; ?>;
+const BASE_PATH = <?php echo json_encode($basePath); ?>;
 
 // History mode: Selected filter values from URL
 <?php if ($isHistoryMode): ?>
@@ -1508,7 +1514,7 @@ function resetFilters() {
     const today = new Date();
     const endDate = today.toISOString().split('T')[0];
     const startDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    window.location.href = '/data-link?history=1&startDate=' + startDate + '&startTime=00:00&endDate=' + endDate + '&endTime=23:59';
+    window.location.href = BASE_PATH + '?history=1&startDate=' + startDate + '&startTime=00:00&endDate=' + endDate + '&endTime=23:59';
 }
 
 function resetDateTimeFilters() {
@@ -1832,7 +1838,7 @@ function loadMoreMessages() {
     urlParams.set('offset', newOffset);
     
     // Build URL
-    const url = '/data-link?' + urlParams.toString();
+    const url = BASE_PATH + '?' + urlParams.toString();
     
     // Fetch new messages
     fetch(url)
