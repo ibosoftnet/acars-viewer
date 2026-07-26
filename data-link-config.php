@@ -16,9 +16,9 @@ define('DATALINK_HEALTH_URL', DATALINK_API_BASE_URL . '/health');
 // {DATE} placeholder will be replaced with date in Y-m-d format (UTC)
 // {TIMESTAMP} placeholder will be replaced with Unix timestamp
 define('SURVEILLANCE_MAP_BASE_URL', 'https://ais.ibosoft.net.tr/map');
-define('SURVEILLANCE_MAP_URL_QUERY', '?reg={REG}&noIsolation');
+define('SURVEILLANCE_MAP_URL_QUERY', '?mapLayersAdd=surveillance_traffics&reg={REG}&noIsolation&mapSetZoomType=level&mapSetZoomValue=7.5');
 define('SURVEILLANCE_MAP_BASE_URL_HISTORY', 'https://ais.ibosoft.net.tr/map');
-define('SURVEILLANCE_MAP_URL_QUERY_HISTORY', '?reg={REG}&showTrace={DATE}&timestamp={TIMESTAMP}&zoom=7.5');
+define('SURVEILLANCE_MAP_URL_QUERY_HISTORY', '?mapLayersAdd=surveillance_traffics&reg={REG}&showTrace={DATE}&timestamp={TIMESTAMP}&mapSetZoomType=level&mapSetZoomValue=7.5');
 
 // Default Filter Settings
 // Controls default selection behavior for label categories on page load
