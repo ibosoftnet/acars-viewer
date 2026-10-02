@@ -811,19 +811,18 @@ function getDataLinkTypesPHP($labelCode, $MESSAGE_LABEL_DESCRIPTIONS) {
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
+                <?php if ($hasMore): ?>
+                <!-- Load More Button -->
+                <div class="load-more-container" style="text-align: center; padding: 20px;">
+                    <button id="loadMoreBtn" class="filter-btn" style="padding: 12px 32px; font-size: 14px;" onclick="loadMoreMessages()">
+                        📥 Load More Messages
+                    </button>
+                </div>
+                <?php endif; ?>
             <?php else: ?>
                 <!-- Live mode: Messages will be inserted here dynamically -->
             <?php endif; ?>
         </div>
-        
-        <?php if ($isHistoryMode && $hasMore): ?>
-        <!-- Load More Button -->
-        <div class="load-more-container" style="text-align: center; padding: 20px;">
-            <button id="loadMoreBtn" class="filter-btn" style="padding: 12px 32px; font-size: 14px;" onclick="loadMoreMessages()">
-                📥 Load More Messages
-            </button>
-        </div>
-        <?php endif; ?>
     </div>
     
     <!-- Receiver Info Popup -->
@@ -1852,9 +1851,10 @@ function loadMoreMessages() {
             const newMessages = doc.querySelectorAll('.message-item');
             const messagesContainer = document.getElementById('messagesContainer');
             
-            // Append new messages
+            // Insert new messages above the Load More button
+            const loadMoreContainer = btn.parentElement;
             newMessages.forEach(msg => {
-                messagesContainer.appendChild(msg.cloneNode(true));
+                messagesContainer.insertBefore(msg.cloneNode(true), loadMoreContainer);
             });
             
             // Re-initialize pagination with new messages
@@ -1869,10 +1869,10 @@ function loadMoreMessages() {
             }
             
             // Check if there are more messages
-            const loadMoreContainer = doc.querySelector('.load-more-container');
-            if (loadMoreContainer) {
+            const nextLoadMore = doc.querySelector('.load-more-container');
+            if (nextLoadMore) {
                 // Update button text with remaining count
-                const remainingText = loadMoreContainer.querySelector('#loadMoreBtn')?.textContent;
+                const remainingText = nextLoadMore.querySelector('#loadMoreBtn')?.textContent;
                 btn.textContent = remainingText || '📥 Load More Messages';
                 btn.disabled = false;
                 
