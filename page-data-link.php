@@ -13,8 +13,8 @@ ob_start();
 // Include configuration first (needed for constants)
 require_once 'data-link-config.php';
 
-// Mint the short-lived JWT cookie that gates the data link backend connection.
-// Must run before any output — output buffering (ob_start above) keeps this safe.
+// Mint the short-lived JWT that gates the data link backend connection
+// (exposed to the page script as DATALINK_TOKEN).
 require_once __DIR__ . '/jwt-issuer.php';
 
 // Include receiver and channel lists early (needed for history mode filtering)
@@ -898,6 +898,8 @@ window.ACARS_CONFIG = <?php
 // CONFIGURATION
 // ===============================
 const CONFIG = <?php echo json_encode(exportConfigToJS()); ?>;
+// Session JWT for the data link backend (null when not logged in)
+const DATALINK_TOKEN = <?php echo json_encode($DATALINK_JWT ?? null); ?>;
 const MESSAGE_LABEL_DESCRIPTIONS = <?php echo json_encode($MESSAGE_LABEL_DESCRIPTIONS); ?>;
 
 // ===============================
@@ -2291,12 +2293,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     );
                     
                     // Create fetch promise
+                    const fetchHeaders = { 'Content-Type': 'application/json' };
+                    if (DATALINK_TOKEN) {
+                        fetchHeaders['Authorization'] = 'Bearer ' + DATALINK_TOKEN;
+                    }
                     const fetchPromise = fetch(DECODE_API_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        credentials: 'include',
+                        headers: fetchHeaders,
                         body: JSON.stringify({ label, text })
                     });
                     
@@ -2365,12 +2368,14 @@ let tcpConnected = false;
 
 // Initialize SSE connection
 function initSSE() {
-    const sseUrl = CONFIG.SSE_STREAM_URL;
+    // EventSource cannot send headers, so the session JWT goes in the query string
+    let sseUrl = CONFIG.SSE_STREAM_URL;
+    if (DATALINK_TOKEN) {
+        sseUrl += (sseUrl.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(DATALINK_TOKEN);
+    }
     
     try {
-        // withCredentials lets the browser send the cross-site datalink_session
-        // cookie to the data link backend (subdomain on .ibosoft.net.tr).
-        eventSource = new EventSource(sseUrl, { withCredentials: true });
+        eventSource = new EventSource(sseUrl);
         
         eventSource.onopen = function(e) {
             // Check TCP status immediately
@@ -2438,7 +2443,7 @@ function updateConnectionStatus(sseConnected, tcpStatus) {
 
 // Check TCP health from backend
 function checkTCPHealth() {
-    fetch(CONFIG.HEALTH_URL, { credentials: 'include' })
+    fetch(CONFIG.HEALTH_URL)
         .then(response => response.json())
         .then(data => {
             tcpConnected = data.tcp_status === 'connected';

@@ -2,8 +2,12 @@
 /**
  * Data Link Backend — Session JWT Issuer
  *
- * Mints a short-lived HS256 JWT in an HttpOnly cookie that the data link
- * backend (atc-data-link-backend) validates at connection establishment.
+ * Mints a short-lived HS256 JWT that the data link backend
+ * (atc-data-link-backend) validates at connection establishment. The token is
+ * exposed to the page as $DATALINK_JWT; the browser sends it as a `?token=`
+ * query parameter on the SSE stream and as an `Authorization: Bearer` header
+ * on /decode. Unlike a cookie, this works whatever domains the frontend and
+ * backend are served from.
  *
  * The static shared secret (DATALINK_JWT_SECRET) never leaves the server:
  * - atcweb signs JWTs with it here
@@ -11,7 +15,7 @@
  * The browser only carries the JWT (per-session, short-lived).
  *
  * Requires the current request to be authenticated (\Ibosoft\SSO::isLoggedIn).
- * Must be included BEFORE any output (cookie is set via setcookie()).
+ * Must be included before the page script that reads $DATALINK_JWT.
  *
  * Designed to be included by atcweb's route-mappings.php on the 'data-link'
  * route. Deployed to atcweb/data-link-files/jwt-issuer.php and uses the $sso
@@ -55,16 +59,5 @@ $signature      = $b64url(hash_hmac('sha256', $signingInput, $secret, true));
 
 $jwt = $signingInput . '.' . $signature;
 
-// Domain '.ibosoft.net.tr' lets the browser auto-send the cookie to
-// dlink-api.ibosoft.net.tr as well as atc.ibosoft.net.tr.
-// SameSite=None + Secure is required because the data link backend lives on
-// a different subdomain (cross-site fetch/EventSource carries the cookie only
-// when both flags are present).
-setcookie('datalink_session', $jwt, [
-    'expires'  => $exp,
-    'path'     => '/',
-    'domain'   => '.ibosoft.net.tr',
-    'secure'   => true,
-    'httponly' => true,
-    'samesite' => 'None',
-]);
+// Handed to the page script (see DATALINK_TOKEN in page-data-link.php).
+$DATALINK_JWT = $jwt;
